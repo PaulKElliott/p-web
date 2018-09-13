@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
+
+body {
+    color: #000000;
+    font-family: Ubuntu, Arial, sans-serif;
+}
+
+h1, h2, h3, h4 {
+    font-family: Ubuntu, Helvetica, sans-serif;
+    color: #000;
+}
