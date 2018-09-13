@@ -15,7 +15,7 @@ const IndexPage = () => (
     </Subject>
     <Subject>
     <h2>Projects</h2>
-    <h4>Virtual Reality 3D Model Viewer</h4>
+    <h3>Virtual Reality 3D Model Viewer</h3>
     <p>
       Use your computer and phone to interact with 3D models in Virtual Reality.
       &nbsp;<a href="https://youtu.be/TLr6f9FNrfI?t=19s">Video</a>
