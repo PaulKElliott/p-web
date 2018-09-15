@@ -10,7 +10,7 @@ import './site.css'
 const Layout = ({ children, subTitle, data }) => {
   let titleSufix = "";
   if (subTitle) {
-    titleSufix =  " : " + subTitle
+    titleSufix =  " | " + subTitle
   }
   return (
     <StaticQuery
@@ -34,7 +34,7 @@ const Layout = ({ children, subTitle, data }) => {
           >
             <html lang="en" />
           </Helmet>
-          <Header siteTitle={data.site.siteMetadata.title} />
+          <Header />
           <div
             style={{
               margin: '0 auto',

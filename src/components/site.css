@@ -4,8 +4,3 @@ body {
     font-family: Ubuntu, Helvetica, sans-serif;
     color: #000;
 }
-
-p {
-    font-size: 112%;
-    text-rendering: optimizeLegibility;
-}
