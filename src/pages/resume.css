@@ -11,3 +11,14 @@
   margin-bottom: 0;
 }
 
+
+@media print {
+  #headerGroup, #getPDFLink {
+    display: none;
+  }
+  
+}
+
+@page { 
+  margin: 1cm .25cm;  
+} 

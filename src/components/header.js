@@ -27,6 +27,7 @@ const Header = () => (
     `}
     render={data => (
       <div
+        id='headerGroup'
         style={{
           background: 'white',
           marginBottom: '1.5rem',
@@ -42,10 +43,12 @@ const Header = () => (
         >
           <div style={{
               float: 'right',
+              padding: '-1.0rem 0rem 0rem 0rem',
             }}
           >
             <Img fixed={data.fileNamey.childImageSharp.fixed} />
           </div>
+
           <div>
             <h1 
               style={{ 
@@ -65,7 +68,7 @@ const Header = () => (
                   float: 'left',
                   maxWidth: 48,
                   marginRight: '0.6rem',
-                  marginTop: '.2rem',
+                  marginTop: '.3rem',
                   marginBottom: '.5rem',
                 }}
                 />

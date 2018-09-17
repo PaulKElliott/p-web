@@ -2,7 +2,7 @@
 import React from 'react'
 import Layout from '../components/layout'
 
-import resumePDF from './Paul_Elliott_Resume.pdf'
+import resumePDF from './Paul Elliott Resume.pdf'
 
 import './resume.css'
 import htmlFile from 'raw-loader!./PaulElliottResume.html'
@@ -11,10 +11,12 @@ function createMarkup() {
 }
 
 const ResumePage = () => (
-  <Layout subTitle="Resume">
-    <a href={resumePDF}>Get PDF</a>
-    <br />
-    <br />
+  <Layout subTitle="Paul Elliott Resume">
+    <div id='getPDFLink'>
+      <a href={resumePDF}>Get PDF</a>
+      <br />
+      <br />
+    </div>
     <div dangerouslySetInnerHTML={createMarkup()} />
   </Layout>
 )
