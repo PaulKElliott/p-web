@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 const Subject = ({ children }) => (
   <div
     style={{
-        margin: '2.5rem auto',
+        margin: '2.0rem auto',
     }}
   >
     {children}

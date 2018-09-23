@@ -3,6 +3,7 @@ import { Link } from 'gatsby'
 
 import Layout from '../components/layout'
 import Subject from '../components/subject'
+import Logo3D from '../components/logo3d'
 
 const IndexPage = () => (
   <Layout subTitle="Paul Elliott's Website">
@@ -30,6 +31,9 @@ const IndexPage = () => (
         <a href='https://www.linkedin.com/in/paulpaulelliott/'>LinkedIn</a>
       </p>
     </Subject>
+    <div style={{ width: '100%', height: '600px' }} >
+      <Logo3D />
+    </div>
   </Layout>
 )
 
