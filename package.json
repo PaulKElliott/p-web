@@ -16,8 +16,7 @@
     "react-dom": "^16.4.2",
     "react-helmet": "^5.2.0",
     "three": "^0.96.0",
-    "three-subdivision-modifier": "^1.0.5",
-    "three-trackballcontrols": "0.0.7"
+    "three-subdivision-modifier": "^1.0.5"
   },
   "keywords": [
     "gatsby"
