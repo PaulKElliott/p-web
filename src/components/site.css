@@ -4,3 +4,8 @@ body {
     font-family: Ubuntu, Helvetica, sans-serif;
     color: #000;
 }
+
+.clip-up {
+    margin-top: -2rem;
+    clip-path: inset(14% 0% 0 0);
+}

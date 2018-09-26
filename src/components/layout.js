@@ -39,7 +39,7 @@ const Layout = ({ children, subTitle, data }) => {
             style={{
               margin: '0 auto',
               maxWidth: 960,
-              padding: '0px 1.0875rem 0rem',
+              padding: '0px 1.0875rem 1.5rem',
               paddingTop: 0,
             }}
           >

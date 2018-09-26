@@ -26,12 +26,11 @@ const IndexPage = () => (
       <h2>Contact</h2>
       <p>
 			  <a href='mail&#116;o&#58;&#112;&#37;61ul&#64;v%69z&#119;o%72ks%68&#111;&#112;%&#50;Eco%6D'>&#112;aul&#64;vi&#122;&#119;or&#107;&#115;h&#111;p&#46;com</a>
-		  </p>
-      <p>
-        <a href='https://www.linkedin.com/in/paulpaulelliott/'>LinkedIn</a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;<a href='https://www.linkedin.com/in/paulpaulelliott/'>LinkedIn</a>
       </p>
     </Subject>
-    <div style={{ width: '100%', height: '600px' }} >
+    <div style={{ width: '100%', height: '600px', marginTop: '-5rem',
+      clipPath: 'inset(14% 0% 0 0)' }} >
       <Logo3D />
     </div>
   </Layout>

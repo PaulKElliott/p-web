@@ -1,61 +1,22 @@
 import React, { Component } from 'react'
 import * as THREE from 'three'
-//import {TrackballControls} from 'trackball'
-
-//let TrackballControls = require('../components/trackball');
 import SpinControl from './spincontrol'
 
-
-//import * as SUBDIV from  'three-subdivision-modifier'
-//var SUBDIV = require('three-subdivision-modifier')
-//import SUBDIV from 'three-subdivision-modifier'
-//var SubdivisionModifier = require('three-subdivision-modifier');
-
-
-
-
 class Logo3D extends Component {
-
   
-  vertexGlowShader = `
-uniform vec3 viewVector;
-uniform float c;
-uniform float p;
-varying float intensity;
-void main() 
-{
-  vec3 vNormal = normalize( normalMatrix * normal );
-	vec3 vNormel = normalize( normalMatrix * viewVector );
-	intensity = pow( c - dot(vNormal, vNormel), p );
-	
-   gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-}
-`
-
-  fragGlowShader = `
-uniform vec3 glowColor;
-varying float intensity;
-void main() 
-{
-	vec3 glow = glowColor * intensity;
-    gl_FragColor = vec4( glow, 1.0 );
-}
-`
-
-
   componentDidMount() {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
     
     this.scene = new THREE.Scene()
-    
+
     this.camera = new THREE.PerspectiveCamera(
-      100,
+      20,
       width / height,
       0.1,
       100
     ) 
-    this.camera.position.set(0, 0, 13)
+    this.camera.position.set(0, 0, 80)
     this.camera.lookAt(0,0,0)
     
     this.renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -86,13 +47,13 @@ void main()
     this.frame.renderOrder = 2
     this.scene.add( this.frame );
     
-    const bs = 10 //logo size
+    const bs = 12 //logo size
     
     this.cube = new THREE.Object3D();
     material = new THREE.MeshLambertMaterial({ color: '#6666ff', side: THREE.FrontSide })
     material.emissive.set('#6666ff')
     material.emissiveIntensity = .3
-    let planeGeo = new THREE.PlaneGeometry(bs * .95, bs * .95)
+    let planeGeo = new THREE.PlaneGeometry(bs * .87, bs * .87)
     let plane = new THREE.Mesh( planeGeo, material )
     plane.renderOrder = 3
     plane.position.set(0, 0, bs/2)
@@ -124,39 +85,8 @@ void main()
     let fill = new THREE.Mesh( geo, fillMaterial);
     fill.renderOrder = 3
     this.cube.add( fill );
-
-    // geo = new THREE.BoxGeometry(bs, bs, bs)
-    // fillMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff} )
-    // fill = new THREE.Mesh( geo, fillMaterial);
-    // fill.scale.multiplyScalar(.99)
-    // fill.renderOrder = 3
-    // this.cube.add( fill );
-
-    // const customMaterial = new THREE.ShaderMaterial( 
-    //   {
-    //       uniforms: 
-    //     { 
-    //       "c":   { type: "f", value: 1.0 },
-    //       "p":   { type: "f", value: .7 },
-    //       glowColor: { type: "c", value: new THREE.Color(0x4444ff) },
-    //       viewVector: { type: "v3", value: this.camera.position }
-    //     },
-    //     vertexShader: this.vertexGlowShader,
-    //     fragmentShader: this.fragGlowShader,
-    //     side: THREE.FrontSide,
-    //     blending: THREE.AdditiveBlending,
-    //     transparent: true
-    //   } 
-    // )
-    // const cubeGlowGeo = new THREE.BoxGeometry(bs, bs, bs)
-    // const smoothCubeGeom = cubeGlowGeo.clone();
-    // const modifier = new SubdivisionModifier( 2.9 );
-    // modifier.modify( smoothCubeGeom ); 
-    // const cubeGlow = new THREE.Mesh( smoothCubeGeom, customMaterial.clone() );
-    // cubeGlow.scale.multiplyScalar(1.7);
-    //this.cube.add( cubeGlow );
     
-    this.cube.position.set(2, -2, 0)
+    this.cube.position.set(3.4, -3.4, bs/2.25)
     this.scene.add(this.cube)
     
     this.controls = new SpinControl(this.cube, this.renderer.domElement)
