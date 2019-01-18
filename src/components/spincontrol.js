@@ -10,7 +10,6 @@ class SpinControl {
     this._normalizedScreenWidth = window.screen.width / 1000 //normaized to 1000 pixel screen
     this._velVec = new THREE.Vector3()
     this._accelVec = new THREE.Vector3()
-    this._objectSidewaysDirection = new THREE.Vector3()
     this._lastTime = performance.now();
     this._dampingFactor = .98
     this._rotationAxis = new THREE.Vector3()
@@ -55,11 +54,11 @@ class SpinControl {
 
     this._moveCurr.set(
       event.screenX / this._normalizedScreenWidth,
-      event.screenY / this._normalizedScreenWidth // width intentional so a pixel scale is square
+      event.screenY / this._normalizedScreenWidth // width intentional so pixel scaling is square
     )
     
     if (this._screen.left !== window.screenX || this._screen.top !== window.screenY) {
-        this._movePrev.copy(this._moveCurr)
+      this._movePrev.copy(this._moveCurr)
       this._screen.left = window.screenX
       this._screen.top  = window.screenY
     }
