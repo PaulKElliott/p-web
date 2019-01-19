@@ -33,7 +33,7 @@ class SpinControl {
     this._lastTime = currentTime
 
     this._accelVec.set( 
-      this._moveCurr.y - this._movePrev.y,
+      this._moveCurr.y - this._movePrev.y,  //y then x, cuz we need perpedicular axis to rotate wround
       this._moveCurr.x - this._movePrev.x,
       0
     )
@@ -42,10 +42,17 @@ class SpinControl {
     this._velVec.add(this._accelVec)
     this._velVec.setLength( this._velVec.length() * this._dampingFactor )
 
+    //relativly rotate in world space
     this._rotationAxis.copy(this._velVec).normalize()
     this.object3D.rotateOnWorldAxis(this._rotationAxis, this._velVec.length()  * timeDelta)
-
-    this._movePrev.copy(this._moveCurr);
+    
+    //find our world space rotation axis in object space = T * ObjectSpaceInverse
+    // let quat = new THREE.Quaternion().copy(this.object3D.quaternion)
+    // quat.inverse()
+    // this._rotationAxis.applyQuaternion(quat)
+    // this.object3D.rotateOnAxis(this._rotationAxis, this._velVec.length()  * timeDelta)
+    
+    this._movePrev.copy(this._moveCurr)
   }
 
   onMouseMove(event) {
