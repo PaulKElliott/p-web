@@ -155,7 +155,7 @@ class SpinControl {
   }
 
   onMouseMove(event) {
-    event.preventDefault()
+    //event.preventDefault()
     event.stopPropagation()
 
     let pos = this.getNoPaddingNoBorderCanvasRelativeMousePosition(event, this._domElement)
