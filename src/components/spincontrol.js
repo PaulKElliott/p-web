@@ -14,7 +14,7 @@ class SpinControl {
     this._FRICTION_COEFFICENT = .01
     this._frictionForce = new THREE.Vector3() //calculated each frame
 
-    this.ray = new THREE.Ray()
+    this.__ray = new THREE.Ray()
     
     this._movePrev = new THREE.Vector2()
     this._moveCurr = new THREE.Vector2()
@@ -27,6 +27,17 @@ class SpinControl {
     
     window.addEventListener( 'mousemove', this, false )
     window.addEventListener( 'mouseout', this, false )
+
+    //local update vars
+    this.__object3DWorldPos = new THREE.Vector3()
+    this.__object3DPlane = new THREE.Plane()
+    this.__objectToCamera = new THREE.Vector3()
+    this.__mouseCurrentDirection = new THREE.Vector3()
+    this.__mouseCurrentPos = new THREE.Vector3()
+    this.__mousePrevDirection = new THREE.Vector3()
+    this.__mousePrevPos = new THREE.Vector3()
+    this.__trackBallSphere = new THREE.Sphere()
+    this.__impulse = new THREE.Vector3() 
   }
 
   dispose() {
@@ -39,64 +50,61 @@ class SpinControl {
     let deltaTime = (currentTime - this._lastMouseEventTime) / 1000 //milliseconds to seconds
     this._lastMouseEventTime = currentTime
 
-    //this gets us points on trackball z plane    
-    //todo project orthgraphicly?
-    let object3DWorldPos = new THREE.Vector3()
-    object3DWorldPos.setFromMatrixPosition(this.object3D.matrixWorld)
+    //intersect mouse on plane at object with normal pointing to camera
+    //todo project orthgraphicly?  plane.projectPoint?
+    
+    this.__object3DWorldPos.setFromMatrixPosition(this.object3D.matrixWorld)
+    
+    this.__objectToCamera.copy(this.camera.position).sub(this.__object3DWorldPos)
+    this.__object3DPlane.setFromNormalAndCoplanarPoint(this.__objectToCamera, this.__object3DWorldPos)
+    this.__ray.origin.copy(this.camera.position)
 
-    let mouseNDC = new THREE.Vector3()
-    let mouseCurrentPos = new THREE.Vector3()
-    mouseNDC.set(this._moveCurr.x, this._moveCurr.y, .5)
-    mouseNDC.unproject(this.camera) //in world space
-    mouseNDC.sub(this.camera.position).normalize() //sub to put around origin
-    //intersect plane at object with normal pointing to camera
-    let distance = (object3DWorldPos.z - this.camera.position.z) / mouseNDC.z;
-    mouseCurrentPos.copy( this.camera.position ).add( mouseNDC.multiplyScalar( distance ) );
+    this.__mouseCurrentDirection.set(this._moveCurr.x, this._moveCurr.y, .5)
+    this.__mouseCurrentDirection.unproject(this.camera) //in world space
+    this.__mouseCurrentDirection.sub(this.camera.position).normalize() //sub to put around origin    
+    this.__ray.direction.copy(this.__mouseCurrentDirection)
+    if(this.__ray.intersectPlane(this.__object3DPlane, this.__mouseCurrentPos) == null) {
+      return
+    }
 
-    let mousePrevPos = new THREE.Vector3()
-    mouseNDC.set(this._movePrev.x, this._movePrev.y, .5)
-    mouseNDC.unproject(this.camera)
-    mouseNDC.sub(this.camera.position).normalize()
-    distance = (object3DWorldPos.z - this.camera.position.z) / mouseNDC.z;
-    mousePrevPos.copy( this.camera.position ).add( mouseNDC.multiplyScalar( distance ) );
+    this.__mousePrevDirection.set(this._movePrev.x, this._movePrev.y, .5)
+    this.__mousePrevDirection.unproject(this.camera)
+    this.__mousePrevDirection.sub(this.camera.position).normalize()
+    this.__ray.direction.copy(this.__mousePrevDirection)
+    if(this.__ray.intersectPlane(this.__object3DPlane, this.__mousePrevPos) == null) {
+      return
+    }
     
     //put in trackball position space to find trackball radius
-    mouseCurrentPos.sub(object3DWorldPos)
-    mousePrevPos.sub(object3DWorldPos)
-    let trackballRadius = Math.max(mouseCurrentPos.length(), mousePrevPos.length(), this.TRACKBALL_RADIUS)
+    this.__mouseCurrentPos.sub(this.__object3DWorldPos)
+    this.__mousePrevPos.sub(this.__object3DWorldPos)
+    // Trackball radius fits both points, but does not shrink so much that you are always acting on edge
+    let trackballRadius = Math.max(this.__mouseCurrentPos.length(), this.__mousePrevPos.length(), this.TRACKBALL_RADIUS)
     
     // Project mouse on sphere
     // One effect: closer we get to sphere, more angle change we have per pixel of mouse movement
-    let trackBallSphere = new THREE.Sphere(object3DWorldPos, trackballRadius)
-    this.ray.origin.copy(this.camera.position)
+    this.__trackBallSphere.set(this.__object3DWorldPos, trackballRadius)
 
-    mouseNDC.set(this._moveCurr.x, this._moveCurr.y, .5)
-    mouseNDC.unproject(this.camera) //in world space
-    mouseNDC.sub(this.camera.position).normalize(); //sub to put around origin
-    this.ray.direction.copy(mouseNDC)
-    let intersectCurrent = this.ray.intersectSphere(trackBallSphere, mouseCurrentPos)
+    this.__ray.direction.copy(this.__mouseCurrentDirection)
+    let intersectCurrent = this.__ray.intersectSphere(this.__trackBallSphere, this.__mouseCurrentPos)
     
-    mouseNDC.set(this._movePrev.x, this._movePrev.y, .5)
-    mouseNDC.unproject(this.camera) //in world space
-    mouseNDC.sub(this.camera.position).normalize();
-    this.ray.direction.copy(mouseNDC)
-    let intersectPast = this.ray.intersectSphere(trackBallSphere, mousePrevPos)
+    this.__ray.direction.copy(this.__mousePrevDirection)
+    let intersectPast = this.__ray.intersectSphere(this.__trackBallSphere, this.__mousePrevPos)
 
-    // Could not be intersecting if faceing 180 degrees away from sphere
-    //if(intersectCurrent != null && intersectPast != null) { //got intersection?
+    // May not intersect if faceing 180 degrees away from sphere
+    if(intersectCurrent != null && intersectPast != null) { //got intersection?
       //put in trackball position space
-      intersectCurrent.sub(object3DWorldPos)
-      intersectPast.sub(object3DWorldPos)
+      intersectCurrent.sub(this.__object3DWorldPos)
+      intersectPast.sub(this.__object3DWorldPos)
+      
+      const deltaMouseRadians = .02 * intersectPast.angleTo(intersectCurrent) / deltaTime
 
+      //change in angular vel
+      this.__impulse.crossVectors(intersectPast, intersectCurrent) 
+      this.__impulse.setLength(deltaMouseRadians)
       
-      let deltaMouseRadians = .02 * intersectPast.angleTo(intersectCurrent) / deltaTime
-      let impulse = new THREE.Vector3() //change in angular vel
-      impulse.crossVectors(intersectPast, intersectCurrent)
-      impulse.setLength(deltaMouseRadians)
-      
-      this._angularMomentum.add(impulse)
-    //}
-    this._movePrev.copy(this._moveCurr);
+      this._angularMomentum.add(this.__impulse)
+    }
   }
     
   update() {
@@ -150,8 +158,6 @@ class SpinControl {
     event.preventDefault()
     event.stopPropagation()
 
-    // ToDo does an event fire multiple times a frame?  Then we are missing impulse!
-    // ToDo optimization stash the events and just run this every frame, not on every event.
     let pos = this.getNoPaddingNoBorderCanvasRelativeMousePosition(event, this._domElement)
     var ndcX = (pos.x / this._domElement.clientWidth) * 2 - 1;
     var ndcY = (1 - (pos.y / this._domElement.clientHeight)) * 2 - 1;
@@ -161,12 +167,15 @@ class SpinControl {
     )
     
     if (this._screen.left !== window.screenX || this._screen.top !== window.screenY) {
+      //Dragging window title bar
       this._movePrev.copy(this._moveCurr)
       this._screen.left = window.screenX
       this._screen.top  = window.screenY
     }
-
-    this.updateMomentum()
+    else {
+      this.updateMomentum()
+      this._movePrev.copy(this._moveCurr);
+    }
   }
 
   resetMove() {
