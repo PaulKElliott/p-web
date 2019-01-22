@@ -89,7 +89,7 @@ class Logo3D extends Component {
     this.cube.position.set(3.4, -3.4, bs/2.25)
     this.scene.add(this.cube)
     
-    this.controls = new SpinControl(this.cube, this.renderer.domElement)
+    this.controls = new SpinControl(this.cube, this.camera, this.renderer.domElement)
 
     window.addEventListener('resize', this.resizeCanvas)
     this.resizeCanvas()
