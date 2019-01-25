@@ -10,21 +10,23 @@ class SpinControl {
     // Inertia constant so don't use inertia or angularVelocity
     //this._ROTAIONAL_INERTIA_INVERSE = 1 / ( (1/6.0) * 1 * 1 )// for cube 1⁄6 x size^2 x mass
     //this._angularVelocity = new THREE.Vector3() //calculated each frame
-    this._angularMomentum = new THREE.Vector3()
+    this._angularMomentum = new THREE.Vector3(.30, .43, .12)
     this._FRICTION_COEFFICENT = .01
-    this._frictionForce = new THREE.Vector3() //calculated each frame
 
     this.__ray = new THREE.Ray()
     
-    this._lastMouseEvent = { ndcX: NaN, ndcY: NaN, time: NaN } //time is milliseconds
-    this._lastUpdateTime = performance.now()
+    this._currentInputInfo = { x: NaN, y: NaN, time: NaN } // Time is milliseconds
+    this._lastInputInfo = { x: NaN, y: NaN, time: NaN } 
+    this._lastUpdateTime = performance.now() // Different than input time
     
     this._domElement = domElement
     this._screen = { left: NaN, top: NaN }
     
     window.addEventListener( 'mousemove', this, false )
     window.addEventListener( 'mouseout', this, false )
-
+    this._domElement.addEventListener( 'touchstart', this, false )
+    this._domElement.addEventListener( 'touchmove', this, false )
+    this._domElement.addEventListener( 'touchend', this, false )    
 
     //local update vars
     this.__trackballWorldPos = new THREE.Vector3()
@@ -36,18 +38,24 @@ class SpinControl {
     this.__mousePrevPos = new THREE.Vector3()
     this.__trackBallSphere = new THREE.Sphere()
     this.__impulse = new THREE.Vector3() 
+    this.__frictionForce = new THREE.Vector3() //calculated each frame
   }
 
   dispose() {
     window.removeEventListener( 'mousemove', this, false )
     window.removeEventListener( 'mouseout', this, false )
+    this._domElement.removeEventListener( 'touchstart', this, false )
+    this._domElement.removeEventListener( 'touchmove', this, false )
+    this._domElement.removeEventListener( 'touchend', this, false )
   }
 
 
   // Precondition: this._lastMouseEvent set 
-  updateMomentum(ndcX, ndcY, time) {
-    let deltaTime = time - this._lastMouseEvent.time
-
+  updateMomentum(inputInfo) {
+    let deltaTime = inputInfo.time - this._lastInputInfo.time
+    if(deltaTime === 0) {
+      return // move along, nothing to see here (when adding new touch finger)
+    }
     // Intersect mouse on plane at object with normal pointing to camera
     // ToDo project orthgraphicly?  plane.projectPoint?
     
@@ -57,7 +65,7 @@ class SpinControl {
     this.__trackballPlane.setFromNormalAndCoplanarPoint(this.__trackballToCamera, this.__trackballWorldPos)
     this.__ray.origin.copy(this.camera.position)
 
-    this.__mouseCurrentDirection.set(ndcX, ndcY, .5)
+    this.__mouseCurrentDirection.set(inputInfo.x, inputInfo.y, .5)
     this.__mouseCurrentDirection.unproject(this.camera) //in world space
     this.__mouseCurrentDirection.sub(this.camera.position).normalize() //sub to put around origin    
     this.__ray.direction.copy(this.__mouseCurrentDirection)
@@ -65,7 +73,7 @@ class SpinControl {
       return
     }
 
-    this.__mousePrevDirection.set(this._lastMouseEvent.ndcX, this._lastMouseEvent.ndcY, .5)
+    this.__mousePrevDirection.set(this._lastInputInfo.x, this._lastInputInfo.y, .5)
     this.__mousePrevDirection.unproject(this.camera)
     this.__mousePrevDirection.sub(this.camera.position).normalize()
     this.__ray.direction.copy(this.__mousePrevDirection)
@@ -94,36 +102,26 @@ class SpinControl {
       intersectCurrent.sub(this.__trackballWorldPos)
       intersectPast.sub(this.__trackballWorldPos)
       
-      let deltaMouseRadians = intersectPast.angleTo(intersectCurrent) / deltaTime      
+      let impulseMagnatude = intersectPast.angleTo(intersectCurrent) / deltaTime // Angle change speed in radians
       // As we project mouse to sphere, closer we get to trackball, more angle change we have per pixel of mouse movement.
       // So when mouse is far from trackball, small impulse.  Bring it back a little.
-      deltaMouseRadians *= .02 * Math.pow(1.05, trackballRadius - this.TRACKBALL_RADIUS)
+      impulseMagnatude *= .02 * Math.pow(1.05, trackballRadius - this.TRACKBALL_RADIUS)
 
       // Change in angular vel
       this.__impulse.crossVectors(intersectPast, intersectCurrent) 
-      this.__impulse.setLength(deltaMouseRadians)
+      this.__impulse.setLength(impulseMagnatude)
       
       this._angularMomentum.add(this.__impulse)
     }
   }
-  
-  applyInput(ndcX, ndcY, time) {
-    if(!isNaN(this._lastMouseEvent.time)) { // is not first time through or after reset
-      this.updateMomentum(ndcX, ndcY, time)
-    }
-    this._lastMouseEvent.ndcX = ndcX
-    this._lastMouseEvent.ndcY = ndcY
-    this._lastMouseEvent.time = time
-  }
     
-  update() {
-    let currentTime = performance.now()
-    let deltaTime = (currentTime - this._lastUpdateTime) / 1000 // milliseconds to seconds
-    this._lastUpdateTime = currentTime
+  update(timestamp) {
+    let deltaTime = (timestamp - this._lastUpdateTime) / 1000 // milliseconds to seconds
+    this._lastUpdateTime = timestamp
 
-    this._frictionForce.copy(this._angularMomentum)
-    this._frictionForce.multiplyScalar(-this._FRICTION_COEFFICENT)
-    this._angularMomentum.add(this._frictionForce)
+    this.__frictionForce.copy(this._angularMomentum)
+    this.__frictionForce.multiplyScalar(-this._FRICTION_COEFFICENT)
+    this._angularMomentum.add(this.__frictionForce)
 
     // Skip momentum to velocity as rotational inertia is constant (for now =)
     // this._angularVelocity.copy(this._angularMomentum) 
@@ -143,38 +141,70 @@ class SpinControl {
     this.trackball.quaternion.premultiply(angularVelQuat)
   }
 
-  getRelativeMousePosition(event, target) {
+  getRelativeMousePosition(event, target, mousePosOut) {
     target = target || event.target;
     var rect = target.getBoundingClientRect();  
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    }
+    mousePosOut.x = event.clientX - rect.left
+    mousePosOut.y = event.clientY - rect.top
   }
   
-  getNoPaddingNoBorderCanvasRelativeMousePosition(event, target) {
+  // Fix so no padding or boarder effects
+  getCanvasRelativeMousePosition(event, target, mousePosOut) {
     target = target || event.target;
-    var pos = this.getRelativeMousePosition(event, target);    
-    pos.x = pos.x * target.width  / this._domElement.clientWidth;
-    pos.y = pos.y * target.height / this._domElement.clientHeight;    
-    return pos;  
+    this.getRelativeMousePosition(event, target, mousePosOut);    
+    mousePosOut.x = mousePosOut.x * target.width  / this._domElement.clientWidth;
+    mousePosOut.y = mousePosOut.y * target.height / this._domElement.clientHeight;
+  }
+
+  applyInput(event, timeStamp) {    
+    this.getCanvasRelativeMousePosition(event, this._domElement, this._currentInputInfo)
+    // Put in NDC space
+    this._currentInputInfo.x = (this._currentInputInfo.x / this._domElement.clientWidth) * 2 - 1
+    this._currentInputInfo.y = (1 - (this._currentInputInfo.y / this._domElement.clientHeight)) * 2 - 1
+    this._currentInputInfo.time = timeStamp / 1000.0 // milliseconds to seconds
+    if(!isNaN(this._lastInputInfo.time)) { // is not first time through or after reset
+      this.updateMomentum(this._currentInputInfo)
+    }
+    const swappyTemp = this._lastInputInfo
+    this._lastInputInfo = this._currentInputInfo
+    this._currentInputInfo = swappyTemp
   }
 
   onMouseMove(event) {
     event.stopPropagation()
-    let pos = this.getNoPaddingNoBorderCanvasRelativeMousePosition(event, this._domElement)
-    var ndcX = (pos.x / this._domElement.clientWidth) * 2 - 1;
-    var ndcY = (1 - (pos.y / this._domElement.clientHeight)) * 2 - 1;
-    this.applyInput(ndcX, ndcY, event.timeStamp / 1000.0 ) // milliseconds to seconds
+    this.applyInput(event, event.timeStamp)
   }
 
   resetMove() {
-    this._lastMouseEvent.time = NaN
+    this._lastInputInfo.time = NaN
   }
 
   onMouseOut(event) {
     this.resetMove()
   }
+
+  onTouchStart(event) {
+    if(event.touches.length === 1) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    this.applyInput(event.touches[ 0 ], event.timeStamp)
+  }
+
+  onTouchMove(event) {
+    if(event.touches.length === 1) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    this.applyInput(event.touches[ 0 ], event.timeStamp)
+  }
+
+  onTouchEnd(event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.resetMove()
+  }
+  
 
   handleEvent(evt) {
     switch(evt.type) {
@@ -183,7 +213,16 @@ class SpinControl {
         break;
       case "mouseout":
         this.onMouseOut(evt)
-        break;        
+        break;
+      case "touchstart":
+        this.onTouchStart(evt)
+        break;
+      case "touchend":
+        this.onTouchEnd(evt)
+        break;
+      case "touchmove":
+        this.onTouchMove(evt)
+        break;
       default:
         return;
     }

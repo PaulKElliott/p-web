@@ -122,8 +122,8 @@ class Logo3D extends Component {
     this.renderer.setSize(width, height);
   }
 
-  animate = () => {
-    this.controls.update();
+  animate = (timestamp) => {
+    this.controls.update(timestamp);
     this.renderScene()
     this.frameId = window.requestAnimationFrame(this.animate)
   }
