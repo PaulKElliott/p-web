@@ -9,20 +9,21 @@ class Logo3D extends Component {
     const height = this.mount.clientHeight
     
     this.scene = new THREE.Scene()
-
-    this.camera = new THREE.PerspectiveCamera(
-      20,
-      width / height,
-      0.1,
-      100
-    ) 
-    this.camera.position.set(0, 0, 80)
-    this.camera.lookAt(0,0,0)
     
     this.renderer = new THREE.WebGLRenderer({ antialias: true })
     this.renderer.setClearColor('#fff')
     this.renderer.setSize(width, height)
     this.mount.appendChild(this.renderer.domElement)
+
+    this.camera = new THREE.PerspectiveCamera(
+      20,
+      width / height,
+      1,
+      100
+    )
+
+    this.camera.position.set(0, 0, 80)
+    this.camera.lookAt(0,0,0)
 
     const sunLight = new THREE.DirectionalLight(0xFFFFFF)
     sunLight.position.set(-100, 100, 100)
@@ -117,8 +118,14 @@ class Logo3D extends Component {
   resizeCanvas = () => {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
-    this.camera.aspect = width / height;
-    this.camera.updateProjectionMatrix();    
+    const aspect = width / height
+    this.camera.aspect = aspect
+    // As window narrows, keep whole logo in view, don't clip sides.
+    // ToDo tighen up canvas so less whitespace above logo as window narrows.
+    if( width < height) { 
+      this.camera.fov = 20 / aspect
+    }
+    this.camera.updateProjectionMatrix()
     this.renderer.setSize(width, height);
   }
 
