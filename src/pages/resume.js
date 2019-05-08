@@ -11,7 +11,7 @@ function createMarkup() {
 }
 
 const ResumePage = () => (
-  <Layout subTitle="Paul Elliott Resume">
+  <Layout subTitle="Paul Elliott's Resume">
     <div id='getPDFLink'>
       <a href={resumePDF}>Get PDF</a>
       <br />
