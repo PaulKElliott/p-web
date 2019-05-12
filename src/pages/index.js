@@ -15,8 +15,7 @@ const IndexPage = () => (
       </p>
     </Subject>
     <Subject>
-    <h2>Projects</h2>
-    <h3>Virtual Reality with Projectors, Headsets and Phones</h3>
+    <h2>Virtual Reality with Projectors, Headsets and Phones Project</h2>
     <p>
       Use phones to interact with 3D models across monitors, projectors, and headsets seamlessly.
       &nbsp;<a href="https://youtu.be/TLr6f9FNrfI?t=19s">Video</a>
@@ -29,7 +28,7 @@ const IndexPage = () => (
         &nbsp;&nbsp;|&nbsp;&nbsp;<a href='https://www.linkedin.com/in/paulpaulelliott/'>LinkedIn</a>
       </p>
     </Subject>
-    <div style={{ width: '100%', height: '600px', marginTop: '-5rem',
+    <div style={{ width: '100%', height: '600px', marginTop: '-5rem', backgroundColor: 'white',
       clipPath: 'inset(14% 0% 0 0)' }} >
       <Logo3D />
     </div>

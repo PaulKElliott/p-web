@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, StaticQuery, graphql } from 'gatsby'
 import Img from "gatsby-image"
-import logo from "../images/vw-icon.png"
+import Logo3D from '../components/logo3d'
 
 const Header = () => (
   <StaticQuery
@@ -14,12 +14,12 @@ const Header = () => (
         }
         fileNamey: file(relativePath: { eq: "images/face.jpg" }) {
           childImageSharp {
-            fixed(height: 100, width: 100,
+            fluid(maxWidth: 100, maxHeight: 100,
               duotone: {
                 highlight: "#FFFFFF",
                 shadow: "#6666FF"
               }) {
-              ...GatsbyImageSharpFixed
+              ...GatsbyImageSharpFluid
             }
           }
         }
@@ -39,17 +39,15 @@ const Header = () => (
             margin: '0 auto',
             maxWidth: 960,
             padding: '1.0rem 1.0rem',
+            overflow: 'auto',
           }}
         >
-          <div style={{
-              float: 'right',
-              padding: '-1.0rem 0rem 0rem 0rem',
-            }}
+          <div //Logo and title
+            style={{ 
+                float: 'left',
+                width: '20em', //360
+              }}
           >
-            <Img fixed={data.fileNamey.childImageSharp.fixed} />
-          </div>
-
-          <div>
             <h1 
               style={{ 
                 margin: "0rem 0rem 1rem",
@@ -63,15 +61,18 @@ const Header = () => (
                   textDecoration: 'none',
                 }}
               >
-                <img src={logo} alt="Logo" 
-                style={{
-                  float: 'left',
-                  maxWidth: 48,
-                  marginRight: '0.6rem',
-                  marginTop: '.3rem',
-                  marginBottom: '.5rem',
-                }}
-                />
+                <div
+                  style={{
+                    float: 'left',
+                    width: '48px',
+                    height: '48px',
+                    marginRight: '0.6rem',
+                    marginTop: '.3rem',
+                    marginBottom: '0',
+                  }}
+                >
+                  <Logo3D />
+                </div>
                 {data.site.siteMetadata.title}
               </Link>
             </h1>
@@ -82,7 +83,15 @@ const Header = () => (
             >
               Paul Elliott's Website
             </h3>
-          </div>          
+          </div>
+          <Img className='hide-small-screens' fluid={data.fileNamey.childImageSharp.fluid } alt="face" 
+            style={{
+              marginRight: '0',
+              marginLeft: 'auto',
+              verticalAlign: 'middle',
+              maxWidth: '100px',
+            }}
+          />
           <div style={{clear: 'both'}}></div>
         </div>
       </div>

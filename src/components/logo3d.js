@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import * as THREE from 'three'
-import SpinControl from './spincontrol'
+import SpinControl from './spin_control'
 
 class Logo3D extends Component {
   
@@ -91,6 +91,7 @@ class Logo3D extends Component {
     this.scene.add(this.cube)
     
     this.controls = new SpinControl(this.cube, this.camera, this.renderer.domElement)
+    this.controls.minTrackballRadius *= .8
 
     window.addEventListener('resize', this.resizeCanvas)
     this.resizeCanvas()
@@ -125,8 +126,13 @@ class Logo3D extends Component {
     if( width < height) { 
       this.camera.fov = 20 / aspect
     }
+    else { //if window size jumps from small to large
+      this.camera.fov = 20
+    }
     this.camera.updateProjectionMatrix()
-    this.renderer.setSize(width, height);
+    this.renderer.setSize(width, height)
+    this.controls.onWindowResize()
+    this.renderScene() //need this or flicker on canvas when switching pages!
   }
 
   animate = (timestamp) => {
@@ -141,7 +147,7 @@ class Logo3D extends Component {
 
   render() {
     return(
-      <div style = {{width:'100%', height:'100%'}}
+      <div style = {{width:'100%', height:'100%', backgroundColor: 'white', color: 'white'}}
         ref={(mount) => { this.mount = mount }}
       />
     )
