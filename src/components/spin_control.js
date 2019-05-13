@@ -30,7 +30,7 @@ var SpinControl = function ( object, camera, domElement ) {
 
 	// internals
 
-  var _angularVelocity = new THREE.Vector3(.33, .42, .15),
+  var _angularVelocity = new THREE.Vector3(.38, .64, .18), //.33, .42, .15),
     _lastQuaternion = new THREE.Quaternion(),
   
 		_mousePrev = new THREE.Vector2(),
