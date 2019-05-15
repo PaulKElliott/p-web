@@ -14,11 +14,7 @@ const Header = () => (
         }
         fileNamey: file(relativePath: { eq: "images/face.jpg" }) {
           childImageSharp {
-            fluid(maxWidth: 100, maxHeight: 100,
-              duotone: {
-                highlight: "#FFFFFF",
-                shadow: "#6666FF"
-              }) {
+            fluid(maxWidth: 100, maxHeight: 100) {
               ...GatsbyImageSharpFluid
             }
           }
