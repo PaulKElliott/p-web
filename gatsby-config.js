@@ -7,11 +7,11 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: 'gatsby-starter-default',
-        short_name: 'starter',
+        name: 'VizWorkshop: Paul Elliott\'s Website',
+        short_name: 'VizWorkshop',
         start_url: '/',
-        background_color: '#663300',
-        theme_color: '#663311',
+        background_color: '#6666FF',
+        theme_color: '#6666FF',
         display: 'minimal-ui',
         icon: 'src/images/vw-icon.png', // This path is relative to the root of the site.
       },
