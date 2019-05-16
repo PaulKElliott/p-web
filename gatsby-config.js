@@ -24,7 +24,13 @@ module.exports = {
         path: `${__dirname}/src/`,
       },
     },
-    `gatsby-plugin-sharp`,
+    {
+      resolve: `gatsby-plugin-sharp`,
+      options: {
+        stripMetadata: true,
+        defaultQuality: 75,
+      },
+    },
     `gatsby-transformer-sharp`,
   ],
 }

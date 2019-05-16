@@ -121,12 +121,7 @@ var SpinControl = function ( object, camera, domElement ) {
       
       // Project mouse on trackball sphere
       
-      if( trackballRadius >= objectToCamera.length()  ) { //if trackball encompases camera
-        //extend ray start position so it fits the sphere
-        objectToCamera.setLength( trackballRadius );
-        ray.origin.addVectors( objectWorldPos, objectToCamera );        
-      }      
-      else {
+      if( trackballRadius <= objectToCamera.length()  ) { //if trackball does not encompases camera
       
         ray.direction.copy( currentInputDirection );
         if( ray.intersectSphere( trackBallSphere, currentInputPos ) == null ) { // May not intersect if faceing 180 degrees away from trackball sphere
