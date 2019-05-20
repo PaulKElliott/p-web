@@ -29,7 +29,7 @@ const IndexPage = () => (
 
     <div className='video-responsive'>
       <iframe width="560" height="315" title="VizWorkshop Demo"
-      src="https://www.youtube-nocookie.com/embed/TLr6f9FNrfI?start=19" 
+      src="https://www.youtube-nocookie.com/embed/TLr6f9FNrfI?rel=0&start=19" 
       frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
       allowFullScreen></iframe>
     </div>
