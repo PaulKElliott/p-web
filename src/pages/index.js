@@ -21,18 +21,27 @@ const IndexPage = () => (
       </p>
     </Subject>
     <Subject>
-    <h2>Virtual Reality with Projectors, Headsets and Phones Project</h2>
-    <p>
-      Use phones to interact with 3D models across monitors, projectors, and headsets seamlessly.
-    </p>
+      <h2>Projects</h2>
+      <h3>Three.js Interaction Module: SpinControls</h3>
+      <p>
+        Rotate 3D objects or the camera as if touching a trackball.&nbsp;&nbsp;
+        <a href="https://paulkelliott.github.io/spin-controls/">Demo</a>
+        &nbsp;&nbsp;|&nbsp;&nbsp; 
+        <a href="https://github.com/PaulKElliott/spin-controls">Source</a>
+      </p>
+      <h3>VR with Projectors + Headsets + Phones</h3>
+      <p>
+        Use phones to interact with 3D models across monitors, projectors, and headsets seamlessly.
+      </p>
+      <div className='video-responsive'>
+        <iframe width="560" height="315" title="VizWorkshop Demo"
+        src="https://www.youtube-nocookie.com/embed/TLr6f9FNrfI?rel=0&start=19" 
+        frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+        allowFullScreen></iframe>
+      </div>
     </Subject>
 
-    <div className='video-responsive'>
-      <iframe width="560" height="315" title="VizWorkshop Demo"
-      src="https://www.youtube-nocookie.com/embed/TLr6f9FNrfI?rel=0&start=19" 
-      frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-      allowFullScreen></iframe>
-    </div>
+    
     
   </Layout>
 )
