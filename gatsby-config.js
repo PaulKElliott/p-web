@@ -12,7 +12,7 @@ module.exports = {
         start_url: '/',
         background_color: '#6666FF',
         theme_color: '#6666FF',
-        display: 'minimal-ui',
+        display: 'browser',
         icon: 'src/images/vw-icon.png', // This path is relative to the root of the site.
       },
     },
@@ -36,9 +36,9 @@ module.exports = {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
         trackingId: "UA-6650449-1",
-        head: false,
+        head: true,
         anonymize: true,
-        respectDNT: true,
+        respectDNT: false,
       },
     },
   ],

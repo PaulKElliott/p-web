@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'gatsby'
+import { OutboundLink } from 'gatsby-plugin-google-analytics'
 
 import Layout from '../components/layout'
 import Subject from '../components/subject'
@@ -8,10 +9,7 @@ const IndexPage = () => (
   <Layout subTitle="Paul Elliott's Website">
     <Subject>
       <h2>Technical Entrepreneur</h2>
-      <p>Virtual Reality, Augmented Reality, 3D Graphics</p>
-      <p>
-        <Link to="/resume/">Resume</Link>
-      </p>
+      <p>Virtual Reality, Augmented Reality, 3D Graphics&nbsp;&nbsp;|&nbsp;&nbsp;<Link to="/resume/">Resume</Link></p>
     </Subject>
     <Subject>
       <h2>Contact</h2>
@@ -25,9 +23,9 @@ const IndexPage = () => (
       <h3>Three.js Interaction Module: SpinControls</h3>
       <p>
         Rotate 3D objects or the camera as if touching a trackball.&nbsp;&nbsp;
-        <a href="https://paulkelliott.github.io/spin-controls/">Demo</a>
+        <OutboundLink href="https://paulkelliott.github.io/spin-controls/">Demo</OutboundLink>
         &nbsp;&nbsp;|&nbsp;&nbsp; 
-        <a href="https://github.com/PaulKElliott/spin-controls">Source</a>
+        <OutboundLink href="https://github.com/PaulKElliott/spin-controls">Source</OutboundLink>
       </p>
       <h3>VR with Projectors + Headsets + Phones</h3>
       <p>
@@ -39,10 +37,7 @@ const IndexPage = () => (
         frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
         allowFullScreen></iframe>
       </div>
-    </Subject>
-
-    
-    
+    </Subject>    
   </Layout>
 )
 
