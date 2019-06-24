@@ -82,10 +82,10 @@ const Header = () => (
           </div>
           <Img className='hide-small-screens' fluid={data.fileNamey.childImageSharp.fluid } alt="face" 
             style={{
-              marginRight: '0',
-              marginLeft: 'auto',
-              verticalAlign: 'middle',
+              margin: 'auto 0px auto auto', //top right bottom left
               maxWidth: '100px',
+              clipPath: 'polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)',
+              
             }}
           />
           <div style={{clear: 'both'}}></div>
